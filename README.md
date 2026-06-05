@@ -1,41 +1,42 @@
 # feishu-editable-diagrams
 
-Version: 0.9
+版本：0.9
 
-Feishu/Lark editable diagram skill. Use it when an agent needs to create, insert, or update SVG-based diagrams that remain editable inside Feishu documents or whiteboards, instead of being uploaded as static PNG/JPG images.
+这个 skill 用来在飞书 / Lark 文档或白板里制作可编辑图表。它的重点不是生成一张好看的 PNG，而是把流程图、架构图、关系图先做成适合飞书导入的 SVG，再转成白板节点，让文字、方框、箭头、容器和占位元素导入后仍然可以继续编辑。
 
-## What It Does
+## 能做什么
 
-- Creates Feishu-friendly SVG diagrams using editable primitives such as rectangles, text, lines, groups, and simple paths.
-- Converts SVG diagrams into Feishu whiteboard-compatible OpenAPI JSON.
-- Inserts new editable whiteboards into Feishu documents through `lark-cli docs +update`.
-- Updates existing Feishu whiteboards through `lark-cli whiteboard +update`.
-- Validates SVG rendering, text overflow, node overlap, and editability before touching the Feishu document.
-- Exports server-rendered previews after insertion or update so the result can be checked against the local preview.
+- 用矩形、文字、线条、分组和简单路径等 SVG 元素制作飞书友好的图表。
+- 把 SVG 转成飞书白板可用的 OpenAPI JSON。
+- 通过 `lark-cli docs +update` 把新的可编辑白板插入到飞书文档里。
+- 通过 `lark-cli whiteboard +update` 更新已有飞书白板。
+- 在写入飞书之前检查渲染效果、文字溢出、节点重叠和可编辑性。
+- 插入或更新后导出飞书服务端渲染预览，确认线上效果和本地预览一致。
 
-## Install
+## 安装方式
 
-Clone this repository into your agent skills directory:
+把仓库 clone 到你的 agent skills 目录即可，例如 Codex：
 
 ```bash
 cd ~/.codex/skills
 git clone https://github.com/raymonder/feishu-editable-diagrams.git
 ```
 
-If your agent uses another skills directory, clone the repository there instead. Keep the folder structure as:
+如果你使用其他 skills 目录，把仓库放到对应目录下即可。目录结构应保持为：
 
 ```text
 skills/
 └── feishu-editable-diagrams/
     ├── SKILL.md
-    └── README.md
+    ├── README.md
+    └── agents/
 ```
 
-Restart the agent or open a new session so the skill metadata is loaded.
+安装后重启 agent，或重新打开会话，让 skill metadata 被重新加载。
 
-## Use
+## 怎么使用
 
-Ask for an editable Feishu/Lark diagram:
+在对话里直接提出“飞书可编辑图表”相关需求即可，例如：
 
 ```text
 帮我在这个飞书文档里插入一个可编辑的流程图。
@@ -49,19 +50,19 @@ Ask for an editable Feishu/Lark diagram:
 更新这个飞书白板，保持里面的文字、方框和箭头都能继续编辑。
 ```
 
-## Requirements
+## 依赖条件
 
-- Node.js and npm.
-- `lark-cli` installed and authenticated.
-- `@larksuite/whiteboard-cli` available through `npx`.
-- Access to the target Feishu/Lark document or whiteboard.
-- The relevant `lark-doc`, `lark-whiteboard`, and `lark-shared` skills, when available.
+- 已安装 Node.js 和 npm。
+- 已安装并认证 `lark-cli`。
+- 可以通过 `npx` 使用 `@larksuite/whiteboard-cli`。
+- 对目标飞书 / Lark 文档或白板有访问权限。
+- 如果环境里有 `lark-doc`、`lark-whiteboard`、`lark-shared` 等 skill，应配合使用。
 
-## Limits
+## 主要限制
 
-- This skill is for editable diagrams, not photo editing, screenshot cleanup, or raster image design.
-- Complex SVG features such as filters, gradients, masks, clipping paths, patterns, and `foreignObject` may not import cleanly.
-- Automatic text wrapping is unreliable; labels should be split into explicit SVG text lines.
-- Existing whiteboards should not be overwritten unless the user explicitly confirms replacement.
-- A successful CLI command is not enough; the server-rendered Feishu preview still needs to be exported and checked.
-- Permission errors, missing scopes, or unauthenticated `lark-cli` sessions must be handled through Feishu/Lark setup skills first.
+- 这个 skill 处理的是可编辑图表，不负责照片修图、截图美化或纯图片设计。
+- 复杂 SVG 特性可能无法稳定导入，例如滤镜、渐变、mask、clipPath、pattern、`foreignObject`。
+- 自动换行不可靠，长文字应拆成多行独立 `<text>`。
+- 更新已有白板前必须确认目标，不能静默覆盖已有内容。
+- CLI 返回成功不代表最终效果正确，还需要导出飞书服务端预览进行检查。
+- 如果遇到权限、scope 或登录问题，应先用飞书接入相关 skill 把认证和权限处理好。
